@@ -24,8 +24,8 @@ deck_surface.fill((184,134,11))
 
 #List to hold them clouds
 clouds = []
-maxClouds = 10 #Max clouds in sky
-minDistanceBetweenClouds = 150 #min distance between any two clouds
+maxClouds = 20 #Max clouds in sky
+minDistanceBetweenClouds = 90 #min distance between any two clouds
 #Function to create the cloud objects 
 
 #some more cloud logics
@@ -36,13 +36,12 @@ def is_valid_position(new_cloud, existing_clouds):
     return True 
     
 def create_cloud(existing_clouds):
-    base_x = random.randint(WIDTH, WIDTH * 2) #base x coordinates starts them off screen
-    y = random.randint(HEIGHT // 2, HEIGHT - 100) #random y that is above the deck
+    base_x = random.randint(WIDTH, WIDTH *2 ) #base x coordinates starts them off screen
+    y = random.randint(HEIGHT // 15, HEIGHT - 385) #random y that is above the deck ?
     #offset = random.randint(-100, 100) #random offsets between -100 and 100 px
     #x = base_x + offset #final x coordinate w offset applied
     return {'image': cloud_image, 'x': base_x, 'y': y} #0?
 
-#some clouds logic no more cloud snake 
 
 
 # Game loop
@@ -59,9 +58,25 @@ while running:
             clouds.append(new_cloud)
             print(f"New cloud added at {new_cloud['x']}, {new_cloud['y']}")
 
+    
+
+
     #update the cloud positions
     for cloud in clouds:
-        cloud['x'] -= 5
+        cloud['x'] -= 1
+
+    cloud_creation_counter = 0
+    cloud_creation_interval = 60 #adjust absed on fps desired freq
+
+    cloud_creation_counter += 1
+    if cloud_creation_counter >= cloud_creation_interval:
+        cloud_creation_counter = 0
+    if len(clouds) < maxClouds:
+        new_cloud = create_cloud(clouds)
+        if is_valid_position(new_cloud, clouds):
+            clouds.append(new_cloud)
+           
+
 
 
 
@@ -81,9 +96,18 @@ while running:
     screen.blit(deck_surface, (0, 200))  # Blit the water surface onto the main screen
     # Draw game elements here
 
+
+    screen.fill((70, 130, 180)) #sky ?
+
     #rendering them clouds
     for cloud in clouds:
         screen.blit(cloud['image'], (cloud['x'], cloud['y']))
+
+
+    screen.blit(water_surface, (0, HEIGHT // 2))  # Blit the water surface onto the main screen
+
+    # Continue with other rendering...
+    screen.blit(deck_surface, (0, 200))  # Blit the deck surface onto the main screen
 
     # Flip the display
     pygame.display.flip()
