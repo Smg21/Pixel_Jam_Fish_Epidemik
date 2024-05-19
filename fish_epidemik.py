@@ -31,10 +31,33 @@ background_frames = [
     pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE6.png')
 ]
 
+# Load Fishman frames
+fishman_frames = [
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/ACTUAL_FISH_MAN_SPRITEEEE_DRUID1.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/ACTUAL_FISH_MAN_SPRITEEEE_DRUID2.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/ACTUAL_FISH_MAN_SPRITEEEE_DRUID3.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/ACTUAL_FISH_MAN_SPRITEEEE_DRUID4.png')
+]
+
+# Scale factor
+scale_factor = 3  # Adjust this factor to change the size of the Fishman
+
+# Scale the Fishman frames
+fishman_frames = [
+    pygame.transform.scale(frame, (int(frame.get_width() * scale_factor), int(frame.get_height() * scale_factor)))
+    for frame in fishman_frames
+]
+
 # Background animation variables
 frame_index = 0
-frame_delay = 5  # Adjust the delay to control the speed of the animation
+frame_delay = 8  # Adjust the delay to control the speed of the animation
 frame_timer = 0
+
+# Fishman animation variables
+fishman_frame_index = 0
+fishman_frame_delay = 10  # Adjust the delay to control the speed of the Fishman animation
+fishman_frame_timer = 0
+fishman_position = (250, 241)  # Adjust this position as needed
 
 # Function to create cloud objects
 def create_cloud(existing_clouds):
@@ -128,6 +151,12 @@ while running:
             frame_timer = 0
             frame_index = (frame_index + 1) % len(background_frames)
 
+        # Update Fishman frame
+        fishman_frame_timer += 1
+        if fishman_frame_timer >= fishman_frame_delay:
+            fishman_frame_timer = 0
+            fishman_frame_index = (fishman_frame_index + 1) % len(fishman_frames)
+
         # Render current background frame
         screen.blit(background_frames[frame_index], (0, 0))
 
@@ -135,12 +164,16 @@ while running:
         for cloud in clouds:
             screen.blit(cloud['image'], (cloud['x'], cloud['y']))
 
+        # Render Fishman
+        screen.blit(fishman_frames[fishman_frame_index], fishman_position)
+
     pygame.display.flip()
     pygame.time.Clock().tick(FPS)
 
 # Quit Pygame
 pygame.quit()
 sys.exit()
+
 
 
 
