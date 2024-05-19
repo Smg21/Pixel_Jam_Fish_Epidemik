@@ -109,6 +109,7 @@ clown_rainbow_fish_frames = scale_fish_frames(clown_rainbow_fish_frames)
 
 # Load custom font for title and buttons
 custom_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/SuperPixel-m2L8j.ttf', 36)
+points_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/SuperPixel-m2L8j.ttf', 24)
 
 # Define buttons globally so they can be accessed in the game loop
 start_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 - 75, 400, 50)
@@ -133,11 +134,11 @@ def draw_start_menu(screen):
 
 # Define game variables
 points = 0
-font = pygame.font.Font(None, 36)  # Default font and size for points
 fish_caught = False
 fish_timer = 0
 fish_frame_index = 0
 no_fish_caught = False
+no_fish_timer = 0
 click_to_fish = True
 fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
 
@@ -146,13 +147,16 @@ def draw_htp_screen(screen):
     screen.fill((31, 81, 69))  # Clear the screen with a background color
     instructions = [
         "Click to fish!",
-        "If you catch a fish, you get 10 points.",
-        "Try to reach 200 points to win the game!",
+        "If you catch a fish, you get points.",
+        "Purple Fish: 10 points",
+        "Rainbow Clown Fish: 15 points",
+        "Rainbow Gold Fish: 20 points",
+        "Try to reach 500 points to win the game!",
         "Good luck!"
     ]
     for i, line in enumerate(instructions):
         instruction_text = custom_font.render(line, True, WHITE)
-        screen.blit(instruction_text, (WIDTH / 2 - instruction_text.get_width() / 2, HEIGHT / 2 - 100 + i * 50))
+        screen.blit(instruction_text, (WIDTH / 2 - instruction_text.get_width() / 2, HEIGHT / 2 - 150 + i * 30))
     # Draw the exit button
     pygame.draw.rect(screen, RED, top_exit_button)
     exit_text = custom_font.render("Exit", True, WHITE)
@@ -160,12 +164,12 @@ def draw_htp_screen(screen):
 
 # Function to draw points
 def draw_points(screen, points):
-    points_text = font.render(f"Points: {points}", True, BLACK)
+    points_text = points_font.render(f"Points: {points}", True, BLACK)
     screen.blit(points_text, (WIDTH // 2 - points_text.get_width() // 2, 10))
 
 # Function to draw additional messages
 def draw_messages(screen, message, y_offset):
-    message_text = font.render(message, True, BLACK)
+    message_text = points_font.render(message, True, BLACK)
     screen.blit(message_text, (WIDTH // 2 - message_text.get_width() // 2, 50 + y_offset))
 
 # Game loop
@@ -193,14 +197,20 @@ while True:
                     showing_htp = False
                     menu = True
             else:
-                if not fish_caught:
+                if not fish_caught and not no_fish_caught:
                     if random.randint(0, 1) == 0:
                         fish_caught = True
-                        points += 10
                         fish_timer = pygame.time.get_ticks()
                         fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
+                        if fish_choice == purple_fish_frames:
+                            points += 10
+                        elif fish_choice == rainbow_gold_fish_frames:
+                            points += 20
+                        elif fish_choice == clown_rainbow_fish_frames:
+                            points += 15
                     else:
                         no_fish_caught = True
+                        no_fish_timer = pygame.time.get_ticks()
                 click_to_fish = False
 
     if menu:
@@ -238,13 +248,26 @@ while True:
             draw_messages(screen, "Click to fish!!", 0)
         if no_fish_caught:
             draw_messages(screen, "No Fish Caught", 20)
-            no_fish_caught = False
+            if pygame.time.get_ticks() - no_fish_timer > 1000:
+                no_fish_caught = False
 
         # Draw exit button at top right
         pygame.draw.rect(screen, RED, top_exit_button)
         exit_text = custom_font.render("Exit", True, WHITE)
         screen.blit(exit_text, (top_exit_button.x + (top_exit_button.width - exit_text.get_width()) / 2, top_exit_button.y + (top_exit_button.height - exit_text.get_height()) / 2))
 
+        # Check for win condition
+        if points >= 500:
+            draw_messages(screen, "Congrats You Win!", 40)
+            pygame.display.flip()
+            pygame.time.wait(3000)  # Display the win message for 3 seconds
+            menu = True  # Return to the main menu
+            points = 0  # Reset points for the next game
+            click_to_fish = True
+            fish_caught = False
+            no_fish_caught = False
+
     pygame.display.flip()
     clock.tick(FPS)
+
 
