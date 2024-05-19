@@ -5,21 +5,22 @@ import random
 # Initialize Pygame
 pygame.init()
 
-# Load cloud image
-cloud_image = pygame.image.load('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/cloud_sprite.png')
-
 # Set up some constants
 WIDTH, HEIGHT = 640, 480
 FPS = 60
+
+# Colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLACK = (0, 0, 0)
 
 # Create the game window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Fish Epidemik")
 
-# List to hold clouds
-clouds = []
-maxClouds = 20
-minDistanceBetweenClouds = 90
+# Load cloud image
+cloud_image = pygame.image.load('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/cloud_sprite.png')
 
 # Load background frames
 background_frames = [
@@ -59,18 +60,52 @@ fishman_frame_delay = 10  # Adjust the delay to control the speed of the Fishman
 fishman_frame_timer = 0
 fishman_position = (250, 241)  # Adjust this position as needed
 
-# Function to create cloud objects
-def create_cloud(existing_clouds):
-    base_x = random.randint(WIDTH, WIDTH * 2)
-    y = random.randint(HEIGHT // 14, HEIGHT - 390)
-    return {'image': cloud_image, 'x': base_x, 'y': y}
+# Load fish images for animation
+purple_fish_frames = [
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH1.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH2.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH3.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH4.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH5.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH6.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH7.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH8.png')
+]
 
-# Function to check if a new cloud position is valid
-def is_valid_position(new_cloud, existing_clouds):
-    for cloud in existing_clouds:
-        if abs(new_cloud['x'] - cloud['x']) < minDistanceBetweenClouds:
-            return False
-    return True
+rainbow_gold_fish_frames = [
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish1.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish2.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish3.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish4.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish5.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish6.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish7.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish8.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish9.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish10.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish11.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish12.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish13.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish14.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish15.png')
+]
+
+clown_rainbow_fish_frames = [
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/clownrainbowfish1.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/clownrainbowfish2.png')
+]
+
+# Function to scale fish frames
+def scale_fish_frames(fish_frames, scale_factor=2):
+    return [
+        pygame.transform.scale(frame, (int(frame.get_width() * scale_factor), int(frame.get_height() * scale_factor)))
+        for frame in fish_frames
+    ]
+
+# Scale the fish frames
+purple_fish_frames = scale_fish_frames(purple_fish_frames)
+rainbow_gold_fish_frames = scale_fish_frames(rainbow_gold_fish_frames)
+clown_rainbow_fish_frames = scale_fish_frames(clown_rainbow_fish_frames)
 
 # Load custom font for title and buttons
 custom_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/SuperPixel-m2L8j.ttf', 36)
@@ -79,200 +114,137 @@ custom_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_E
 start_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 - 75, 400, 50)
 exit_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 + 10, 400, 50)
 htp_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 + 95, 400, 50)
+top_exit_button = pygame.Rect(WIDTH - 100, 10, 80, 30)  # Exit button at the top
 
 # Function to draw the start menu
 def draw_start_menu(screen):
     screen.fill((31, 81, 69))  # Clear the screen with a background color
-    title_text = custom_font.render("Fish Epidemik", True, (240, 248, 255))
-    title_rect = title_text.get_rect(center=(WIDTH / 2, HEIGHT / 4))
-    screen.blit(title_text, title_rect)
+    title_text = custom_font.render("Fish Epidemik", True, WHITE)
+    start_text = custom_font.render("Start Game", True, WHITE)
+    exit_text = custom_font.render("Exit Game", True, WHITE)
+    htp_text = custom_font.render("How to Play", True, WHITE)
+    pygame.draw.rect(screen, RED, start_button)
+    pygame.draw.rect(screen, RED, exit_button)
+    pygame.draw.rect(screen, RED, htp_button)
+    screen.blit(title_text, (WIDTH / 2 - title_text.get_width() / 2, HEIGHT / 2 - 150))
+    screen.blit(start_text, (start_button.x + (start_button.width - start_text.get_width()) / 2, start_button.y + (start_button.height - start_text.get_height()) / 2))
+    screen.blit(exit_text, (exit_button.x + (exit_button.width - exit_text.get_width()) / 2, exit_button.y + (exit_button.height - exit_text.get_height()) / 2))
+    screen.blit(htp_text, (htp_button.x + (htp_button.width - htp_text.get_width()) / 2, htp_button.y + (htp_button.height - htp_text.get_height()) / 2))
 
-    # Draw buttons with outlines
-    pygame.draw.rect(screen, (240, 248, 255), start_button, width=4)  # Outline
-    pygame.draw.rect(screen, (240, 248, 255), exit_button, width=4)  # Outline
-    pygame.draw.rect(screen, (240, 248, 255), htp_button, width=4)  # Outline
+# Define game variables
+points = 0
+font = pygame.font.Font(None, 36)  # Default font and size for points
+fish_caught = False
+fish_timer = 0
+fish_frame_index = 0
+no_fish_caught = False
+click_to_fish = True
+fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
 
-    # Draw button texts using the custom font and adjust their positions
-    start_text = custom_font.render("Start", True, (255, 255, 255))
-    start_text_rect = start_text.get_rect(center=start_button.center)
-    start_text_rect.x += start_button.width // 27  # Adjust horizontally to the left
-    start_text_rect.y += start_button.height // 27  # Adjust vertically upwards
-    screen.blit(start_text, start_text_rect.topleft)
+# Function to draw "How to Play" screen
+def draw_htp_screen(screen):
+    screen.fill((31, 81, 69))  # Clear the screen with a background color
+    instructions = [
+        "Click to fish!",
+        "If you catch a fish, you get 10 points.",
+        "Try to reach 200 points to win the game!",
+        "Good luck!"
+    ]
+    for i, line in enumerate(instructions):
+        instruction_text = custom_font.render(line, True, WHITE)
+        screen.blit(instruction_text, (WIDTH / 2 - instruction_text.get_width() / 2, HEIGHT / 2 - 100 + i * 50))
+    # Draw the exit button
+    pygame.draw.rect(screen, RED, top_exit_button)
+    exit_text = custom_font.render("Exit", True, WHITE)
+    screen.blit(exit_text, (top_exit_button.x + (top_exit_button.width - exit_text.get_width()) / 2, top_exit_button.y + (top_exit_button.height - exit_text.get_height()) / 2))
 
-    exit_text = custom_font.render("Exit", True, (255, 255, 255))
-    exit_text_rect = exit_text.get_rect(center=exit_button.center)
-    exit_text_rect.x += exit_button.width // 24  # Adjust horizontally to the left
-    exit_text_rect.y += exit_button.height // 24  # Adjust vertically upwards
-    screen.blit(exit_text, exit_text_rect.topleft)
+# Function to draw points
+def draw_points(screen, points):
+    points_text = font.render(f"Points: {points}", True, BLACK)
+    screen.blit(points_text, (WIDTH // 2 - points_text.get_width() // 2, 10))
 
-    htp_text = custom_font.render("How to Play", True, (255, 255, 255))
-    htp_text_rect = htp_text.get_rect(center=htp_button.center)
-    htp_text_rect.x += htp_button.width // 30  # Adjust horizontally to the left
-    htp_text_rect.y += htp_button.height // 30  # Adjust vertically upwards
-    screen.blit(htp_text, htp_text_rect.topleft)
+# Function to draw additional messages
+def draw_messages(screen, message, y_offset):
+    message_text = font.render(message, True, BLACK)
+    screen.blit(message_text, (WIDTH // 2 - message_text.get_width() // 2, 50 + y_offset))
 
-# Main game loop
-running = True
-menu_active = True
-while running:
+# Game loop
+clock = pygame.time.Clock()
+menu = True
+showing_htp = False
+
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-            if menu_active:
-                if start_button.collidepoint(mouse_pos):
-                    menu_active = False
-                elif exit_button.collidepoint(mouse_pos):
-                    running = False
-                elif htp_button.collidepoint(mouse_pos):
-                    # TODO: Implement how to play instructions
-                    pass
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if menu:
+                if start_button.collidepoint(event.pos):
+                    menu = False
+                elif exit_button.collidepoint(event.pos):
+                    pygame.quit()
+                    sys.exit()
+                elif htp_button.collidepoint(event.pos):
+                    showing_htp = True
+                    menu = False
+            elif showing_htp:
+                if top_exit_button.collidepoint(event.pos):
+                    showing_htp = False
+                    menu = True
+            else:
+                if not fish_caught:
+                    if random.randint(0, 1) == 0:
+                        fish_caught = True
+                        points += 10
+                        fish_timer = pygame.time.get_ticks()
+                        fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
+                    else:
+                        no_fish_caught = True
+                click_to_fish = False
 
-    if menu_active:
+    if menu:
         draw_start_menu(screen)
+    elif showing_htp:
+        draw_htp_screen(screen)
     else:
-        # Clear clouds that moved off-screen
-        clouds[:] = [cloud for cloud in clouds if cloud['x'] > -cloud_image.get_width()]
+        screen.fill(WHITE)  # Clear the screen with white background
 
-        # Create new clouds if needed
-        if len(clouds) < maxClouds:
-            new_cloud = create_cloud(clouds)
-            if is_valid_position(new_cloud, clouds):
-                clouds.append(new_cloud)
-
-        # Move clouds
-        for cloud in clouds:
-            cloud['x'] -= 1
-
-        # Update background frame
+        # Background animation
+        screen.blit(background_frames[frame_index], (0, 0))
         frame_timer += 1
         if frame_timer >= frame_delay:
             frame_timer = 0
             frame_index = (frame_index + 1) % len(background_frames)
 
-        # Update Fishman frame
+        # Fishman animation
+        screen.blit(fishman_frames[fishman_frame_index], fishman_position)
         fishman_frame_timer += 1
         if fishman_frame_timer >= fishman_frame_delay:
             fishman_frame_timer = 0
             fishman_frame_index = (fishman_frame_index + 1) % len(fishman_frames)
 
-        # Render current background frame
-        screen.blit(background_frames[frame_index], (0, 0))
+        draw_points(screen, points)
 
-        # Render clouds
-        for cloud in clouds:
-            screen.blit(cloud['image'], (cloud['x'], cloud['y']))
+        # Fish animation
+        if fish_caught:
+            fish_frame_index = (pygame.time.get_ticks() - fish_timer) // 100 % len(fish_choice)
+            screen.blit(fish_choice[fish_frame_index], (350, 300))
+            if pygame.time.get_ticks() - fish_timer > 1000:
+                fish_caught = False
 
-        # Render Fishman
-        screen.blit(fishman_frames[fishman_frame_index], fishman_position)
+        # Display messages
+        if click_to_fish:
+            draw_messages(screen, "Click to fish!!", 0)
+        if no_fish_caught:
+            draw_messages(screen, "No Fish Caught", 20)
+            no_fish_caught = False
+
+        # Draw exit button at top right
+        pygame.draw.rect(screen, RED, top_exit_button)
+        exit_text = custom_font.render("Exit", True, WHITE)
+        screen.blit(exit_text, (top_exit_button.x + (top_exit_button.width - exit_text.get_width()) / 2, top_exit_button.y + (top_exit_button.height - exit_text.get_height()) / 2))
 
     pygame.display.flip()
-    pygame.time.Clock().tick(FPS)
+    clock.tick(FPS)
 
-# Quit Pygame
-pygame.quit()
-sys.exit()
-
-
-
-
-
-#THIS PERFECT FOR THE FISH AS THE CLOUDS IS BUT NOT FOR THEM CLOUDS SAVING FOR WHEN I MAKE FISH THO
-
-# import pygame
-# import sys
-# import random
-
-# #import cloud image
-# cloud_image = pygame.image.load('C:\\Users\\Smg21\\OneDrive\\Desktop\\Pixel_Jam_Fish_Epidemik\\sprite_level_one\\cloud_sprite.png')
-# # Initialize Pygame
-# pygame.init()
-
-# # Set up some constants
-# WIDTH, HEIGHT = 640, 480
-# FPS = 60
-
-# # Create the game window
-# screen = pygame.display.set_mode((WIDTH, HEIGHT))
-# pygame.display.set_caption("Fish Epidemik")
-
-# # Create a surface for the water area
-# water_surface = pygame.Surface((WIDTH, HEIGHT // 2), pygame.SRCALPHA)
-# water_surface.fill((0, 0, 255, 128))  # Fill the water surface with semi-transparent dark blue
-# #create deck area surface
-# deck_surface = pygame.Surface((365, 50), pygame.SRCALPHA)
-# deck_surface.fill((184,134,11))
-
-# #List to hold them clouds
-# clouds = []
-# maxClouds = 10 #Max clouds in sky
-# minDistanceBetweenClouds = 150 #min distance between any two clouds
-# #Function to create the cloud objects 
-
-# #some more cloud logics
-# def is_valid_position(new_cloud, existing_clouds):
-#     for cloud in existing_clouds:
-#         if abs(new_cloud['x'] - cloud['x']) < minDistanceBetweenClouds:
-#             return False
-#     return True 
-    
-# def create_cloud(existing_clouds):
-#     base_x = random.randint(WIDTH, WIDTH * 2) #base x coordinates starts them off screen
-#     y = random.randint(HEIGHT // 2, HEIGHT - 100) #random y that is above the deck
-#     #offset = random.randint(-100, 100) #random offsets between -100 and 100 px
-#     #x = base_x + offset #final x coordinate w offset applied
-#     return {'image': cloud_image, 'x': base_x, 'y': y} #0?
-
-# #some clouds logic no more cloud snake 
-
-
-# # Game loop
-# running = True
-# while running:
-
-#     #we gotta remove them clouds that went off
-#     clouds[:] = [cloud for cloud in clouds if cloud['x'] > -cloud_image.get_width()]
-
-#     #Create the new clouds
-#     if len(clouds) < maxClouds:
-#         new_cloud = create_cloud(clouds)
-#         if is_valid_position(new_cloud, clouds):
-#             clouds.append(new_cloud)
-#             print(f"New cloud added at {new_cloud['x']}, {new_cloud['y']}")
-
-#     #update the cloud positions
-#     for cloud in clouds:
-#         cloud['x'] -= 5
-
-
-
-#     # Event handling
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             running = False
-#         # Add more event types here as needed
-
-#     # Update game state
-#     # Example: Move character, check collisions, etc.
-
-    
-#     # Render game state
-#     screen.fill((70, 130, 180))  # Fill the screen with black color
-#     screen.blit(water_surface, (0, HEIGHT // 2))  # Blit the water surface onto the main screen
-#     screen.blit(deck_surface, (0, 200))  # Blit the water surface onto the main screen
-#     # Draw game elements here
-
-#     #rendering them clouds
-#     for cloud in clouds:
-#         screen.blit(cloud['image'], (cloud['x'], cloud['y']))
-
-#     # Flip the display
-#     pygame.display.flip()
-
-#     # Limit frame rate
-#     pygame.time.Clock().tick(FPS)
-
-# # Quit Pygame
-# pygame.quit()
-# sys.exit()
