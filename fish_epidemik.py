@@ -2,11 +2,11 @@ import pygame
 import sys
 import random
 
-# Load cloud image
-cloud_image = pygame.image.load('C:\\Users\\Smg21\\OneDrive\\Desktop\\Pixel_Jam_Fish_Epidemik\\sprite_level_one\\cloud_sprite.png')
-
 # Initialize Pygame
 pygame.init()
+
+# Load cloud image
+cloud_image = pygame.image.load('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/cloud_sprite.png')
 
 # Set up some constants
 WIDTH, HEIGHT = 640, 480
@@ -21,10 +21,25 @@ clouds = []
 maxClouds = 20
 minDistanceBetweenClouds = 90
 
+# Load background frames
+background_frames = [
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE1.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE2.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE3.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE4.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE5.png'),
+    pygame.image.load(r'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE6.png')
+]
+
+# Background animation variables
+frame_index = 0
+frame_delay = 5  # Adjust the delay to control the speed of the animation
+frame_timer = 0
+
 # Function to create cloud objects
 def create_cloud(existing_clouds):
     base_x = random.randint(WIDTH, WIDTH * 2)
-    y = random.randint(HEIGHT // 15, HEIGHT - 385)
+    y = random.randint(HEIGHT // 14, HEIGHT - 390)
     return {'image': cloud_image, 'x': base_x, 'y': y}
 
 # Function to check if a new cloud position is valid
@@ -35,7 +50,7 @@ def is_valid_position(new_cloud, existing_clouds):
     return True
 
 # Load custom font for title and buttons
-custom_font = pygame.font.Font('C:\\Users\\Smg21\\OneDrive\\Desktop\\Pixel_Jam_Fish_Epidemik\\SuperPixel-m2L8j.ttf', 36)
+custom_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/SuperPixel-m2L8j.ttf', 36)
 
 # Define buttons globally so they can be accessed in the game loop
 start_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 - 75, 400, 50)
@@ -54,14 +69,13 @@ def draw_start_menu(screen):
     pygame.draw.rect(screen, (240, 248, 255), exit_button, width=4)  # Outline
     pygame.draw.rect(screen, (240, 248, 255), htp_button, width=4)  # Outline
 
-# Draw button texts using the custom font and adjust their positions
+    # Draw button texts using the custom font and adjust their positions
     start_text = custom_font.render("Start", True, (255, 255, 255))
     start_text_rect = start_text.get_rect(center=start_button.center)
     start_text_rect.x += start_button.width // 27  # Adjust horizontally to the left
     start_text_rect.y += start_button.height // 27  # Adjust vertically upwards
     screen.blit(start_text, start_text_rect.topleft)
 
-    
     exit_text = custom_font.render("Exit", True, (255, 255, 255))
     exit_text_rect = exit_text.get_rect(center=exit_button.center)
     exit_text_rect.x += exit_button.width // 24  # Adjust horizontally to the left
@@ -95,19 +109,31 @@ while running:
     if menu_active:
         draw_start_menu(screen)
     else:
-        # Existing game loop code
+        # Clear clouds that moved off-screen
         clouds[:] = [cloud for cloud in clouds if cloud['x'] > -cloud_image.get_width()]
+
+        # Create new clouds if needed
         if len(clouds) < maxClouds:
             new_cloud = create_cloud(clouds)
             if is_valid_position(new_cloud, clouds):
                 clouds.append(new_cloud)
+
+        # Move clouds
         for cloud in clouds:
             cloud['x'] -= 1
 
-    # Render game state
-            screen.fill((31, 81, 69))  # This line sets the background color. Remove or change it as needed.
-            for cloud in clouds:
-                    screen.blit(cloud['image'], (cloud['x'], cloud['y']))
+        # Update background frame
+        frame_timer += 1
+        if frame_timer >= frame_delay:
+            frame_timer = 0
+            frame_index = (frame_index + 1) % len(background_frames)
+
+        # Render current background frame
+        screen.blit(background_frames[frame_index], (0, 0))
+
+        # Render clouds
+        for cloud in clouds:
+            screen.blit(cloud['image'], (cloud['x'], cloud['y']))
 
     pygame.display.flip()
     pygame.time.Clock().tick(FPS)
