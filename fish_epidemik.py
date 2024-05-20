@@ -12,7 +12,7 @@ FPS = 60
 
 # Colors
 WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+RED = (255, 0, 0, 128)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
@@ -23,7 +23,7 @@ sprite_directory = os.path.join(current_directory, 'sprite_level_one')
 
 # Create the game window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Fish Epidemic")
+pygame.display.set_caption("Fish Epidemik")
 
 # Load images
 cloud_image = pygame.image.load(os.path.join(sprite_directory, 'cloud_sprite.png'))
@@ -84,7 +84,7 @@ game_exit_button = pygame.Rect(WIDTH - 100, HEIGHT - 40, 80, 30)
 # Function to draw the start menu
 def draw_start_menu(screen):
     screen.fill((31, 81, 69))
-    title_text = menu_font.render("Fish Epidemic", True, WHITE)
+    title_text = menu_font.render("Fish Epidemik", True, WHITE)
     start_text = menu_font.render("Start Game", True, WHITE)
     exit_text = menu_font.render("Exit Game", True, WHITE)
     htp_text = menu_font.render("How to Play", True, WHITE)
@@ -108,16 +108,16 @@ def draw_htp_screen(screen):
         "",
         "20 points for the clown fish",
         "",
-        "Evil Fish is -10 Points",
+        "Evil Fish is -30 Points",
         "",
         "Try to reach 500 points to win the game!",
         "",
         "Good luck!"
     ]
     for i, line in enumerate(instructions):
-        instruction_text = menu_font.render(line, True, WHITE)
+        instruction_text = points_font.render(line, True, WHITE)
         screen.blit(instruction_text, (WIDTH / 2 - instruction_text.get_width() / 2, HEIGHT / 2 - 150 + i * 30))
-    pygame.draw.rect(screen, BLUE, top_exit_button)
+    pygame.draw.rect(screen, RED, top_exit_button)
     exit_text = menu_font.render("Exit", True, WHITE)
     screen.blit(exit_text, (top_exit_button.x + (top_exit_button.width - exit_text.get_width()) / 2, top_exit_button.y + (top_exit_button.height - exit_text.get_height()) / 2))
 
@@ -186,15 +186,16 @@ while True:
                 if game_exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-                #HERW
+                #HERE
                 if not win_message_shown:
                     if not fish_caught and not no_fish_caught:
-                        # Check if the randomly generated number is a factor of 7
                         if random.randint(0, 6) == 0:
                             fish_caught = True
                             fish_timer = pygame.time.get_ticks()
                             fish_choice = evil_fish_frames  # Use the evil fish frames
-                            points -= 10  # Deduct 10 points for catching the evil fish
+                            points -= 30  # Deduct 30 points for catching the evil fish
+                            fish_sound = pygame.mixer.Sound("wrong-answer-21-199825.mp3")  # Load the fish caught sound
+                            fish_sound.play()  # Play the sound effect
                         else:
                             if random.randint(0, 1) == 0:
                                 fish_caught = True
@@ -206,27 +207,38 @@ while True:
                                     points += 15
                                 elif fish_choice == clown_rainbow_fish_frames:
                                     points += 20
+                                fish_sound = pygame.mixer.Sound("collect-points-190037.mp3")  # Load the fish caught sound
+                                fish_sound.play()  # Play the sound effect
                             else:
                                 no_fish_caught = True
                                 no_fish_timer = pygame.time.get_ticks()
-                        click_to_fish = False
-
-
-    if points >= 500:
-        if not win_message_shown:
-            screen.fill((31, 81, 69))
-            win_message_shown = True
-            draw_messages(screen, "You Will Now Return To The Main Menu!", 60)
-            draw_messages(screen, "You Won!", 10)
-            draw_messages(screen, "Thank You For Playing My First Game!", 40)
-            pygame.display.flip()
-            pygame.time.wait(3000)  # Display the win message for 3 seconds
-            menu = True  # Return to the main menu
-            points = 0  # Reset points for the next game
-            click_to_fish = True
-            fish_caught = False
-            no_fish_caught = False
-            win_message_shown = False  # Reset the win message flag
+                                # HERE
+                                no_fish_sound = pygame.mixer.Sound("080047_lose_funny_retro_video-game-80925.mp3")  # Load the no fish caught sound
+                                no_fish_sound.play()  # Play the sound effect
+                    click_to_fish = False
+            pygame.mixer.init()
+            win_sound = pygame.mixer.Sound("congratulations-deep-voice-172193.mp3")
+#Sound Effect CONGRATULATIONS by <a href="https://pixabay.com/users/voicebosch-30143949/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=172193">Otto</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=172193">Pixabay</a>
+#Sound Effect COIN POINTS by <a href="https://pixabay.com/users/liecio-3298866/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=190037">LIECIO</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=190037">Pixabay</a>
+#Sound Effect WRONGANSWER by <a href="https://pixabay.com/users/audiosto-40753689/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=199825">Audiosto</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=199825">Pixabay</a>
+#Sound Effect LOOSEFUNNY from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=80925">Pixabay</a>
+        if points >= 500:
+            if not win_message_shown:
+                screen.fill((31, 81, 69))
+                win_message_shown = True
+                draw_messages(screen, "You Will Now Return To The Main Menu!", 60)
+                draw_messages(screen, "You Won!", 10)
+                draw_messages(screen, "Thank You For Playing My First Game!", 40)
+                # Play the winning sound effect
+                win_sound.play()
+                pygame.display.flip()
+                pygame.time.wait(3000)  # Display the win message for 3 seconds
+                menu = True  # Return to the main menu
+                points = 0  # Reset points for the next game
+                click_to_fish = True
+                fish_caught = False
+                no_fish_caught = False
+                win_message_shown = False
 
     if menu:
         draw_start_menu(screen)
