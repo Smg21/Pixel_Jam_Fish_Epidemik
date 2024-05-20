@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import os  # To get file paths
 
 # Initialize Pygame
 pygame.init()
@@ -8,6 +9,7 @@ pygame.init()
 # Set up some constants
 WIDTH, HEIGHT = 640, 480
 FPS = 60
+
 # Colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -15,35 +17,44 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 
+# Set up file paths
+current_directory = os.path.dirname(__file__)
+sprite_directory = os.path.join(current_directory, 'sprite_level_one')
+
 # Create the game window
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Fish Epidemik")
+pygame.display.set_caption("Fish Epidemic")
 
 # Load images
-cloud_image = pygame.image.load('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/cloud_sprite.png')
+cloud_image = pygame.image.load(os.path.join(sprite_directory, 'cloud_sprite.png'))
 
 background_frames = [
-    pygame.image.load(f'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/BACKGROUNDLEVELONE{i}.png')
+    pygame.image.load(os.path.join(sprite_directory, f'BACKGROUNDLEVELONE{i}.png'))
     for i in range(1, 7)
 ]
 
 fishman_frames = [
-    pygame.image.load(f'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/ACTUAL_FISH_MAN_SPRITEEEE_DRUID{i}.png')
+    pygame.image.load(os.path.join(sprite_directory, f'ACTUAL_FISH_MAN_SPRITEEEE_DRUID{i}.png'))
+    for i in range(1, 5)
+]
+
+evil_fish_frames = [
+    pygame.image.load(os.path.join(sprite_directory, f'EVEN BETTER EVUL FISH{i}.png'))
     for i in range(1, 5)
 ]
 
 purple_fish_frames = [
-    pygame.image.load(f'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/PURPLE_FISH{i}.png')
+    pygame.image.load(os.path.join(sprite_directory, f'PURPLE_FISH{i}.png'))
     for i in range(1, 9)
 ]
 
 rainbow_gold_fish_frames = [
-    pygame.image.load(f'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/rainbow_gold_fish{i}.png')
+    pygame.image.load(os.path.join(sprite_directory, f'rainbow_gold_fish{i}.png'))
     for i in range(1, 16)
 ]
 
 clown_rainbow_fish_frames = [
-    pygame.image.load(f'C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/sprite_level_one/clownrainbowfish{i}.png')
+    pygame.image.load(os.path.join(sprite_directory, f'clownrainbowfish{i}.png'))
     for i in range(1, 3)
 ]
 
@@ -57,11 +68,11 @@ fishman_frames = scale_frames(fishman_frames, scale_factor)
 purple_fish_frames = scale_frames(purple_fish_frames, 2)
 rainbow_gold_fish_frames = scale_frames(rainbow_gold_fish_frames, 2)
 clown_rainbow_fish_frames = scale_frames(clown_rainbow_fish_frames, 2)
+evil_fish_frames = scale_frames(evil_fish_frames, 2)
 
 # Load custom fonts
-menu_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/SuperPixel-m2L8j.ttf', 36)
-points_font = pygame.font.Font('C:/Users/Smg21/OneDrive/Desktop/Pixel_Jam_Fish_Epidemik/MinecraftBold-nMK1.otf', 24)
-
+menu_font = pygame.font.Font(os.path.join(current_directory, 'SuperPixel-m2L8j.ttf'), 36)
+points_font = pygame.font.Font(os.path.join(current_directory, 'MinecraftBold-nMK1.otf'), 24)
 
 # Define buttons
 start_button = pygame.Rect(WIDTH / 2 - 200, HEIGHT / 2 - 75, 400, 50)
@@ -73,7 +84,7 @@ game_exit_button = pygame.Rect(WIDTH - 100, HEIGHT - 40, 80, 30)
 # Function to draw the start menu
 def draw_start_menu(screen):
     screen.fill((31, 81, 69))
-    title_text = menu_font.render("Fish Epidemik", True, WHITE)
+    title_text = menu_font.render("Fish Epidemic", True, WHITE)
     start_text = menu_font.render("Start Game", True, WHITE)
     exit_text = menu_font.render("Exit Game", True, WHITE)
     htp_text = menu_font.render("How to Play", True, WHITE)
@@ -90,8 +101,17 @@ def draw_htp_screen(screen):
     screen.fill((31, 81, 69))
     instructions = [
         "Click to fish!",
-        "If you catch a fish, you get 10 points.",
-        "Try to reach 100 points to win the game!",
+        "",
+        "If you catch a purple fish you get 10 points,",
+        "",
+        "15 points for the gold fish",
+        "",
+        "20 points for the clown fish",
+        "",
+        "Evil Fish is -10 Points",
+        "",
+        "Try to reach 500 points to win the game!",
+        "",
         "Good luck!"
     ]
     for i, line in enumerate(instructions):
@@ -103,7 +123,7 @@ def draw_htp_screen(screen):
 
 # Function to draw additional messages
 def draw_messages(screen, message, y_offset):
-    message_text = points_font.render(message, True, BLACK)
+    message_text = points_font.render(message, True, WHITE)
     screen.blit(message_text, (WIDTH // 2 - message_text.get_width() // 2, 50 + y_offset))
 
 # Function to draw points
@@ -119,6 +139,7 @@ fish_frame_index = 0
 no_fish_caught = False
 no_fish_timer = 0
 click_to_fish = True
+# Game variables (continued)
 fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
 fishman_position = (250, 241)
 
@@ -140,6 +161,7 @@ fish_frame_timer = 0
 clock = pygame.time.Clock()
 menu = True
 showing_htp = False
+win_message_shown = False  # Add this variable to track if the win message has been shown
 
 while True:
     for event in pygame.event.get():
@@ -164,16 +186,47 @@ while True:
                 if game_exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-                if not fish_caught and not no_fish_caught:
-                    if random.randint(0, 1) == 0:
-                        fish_caught = True
-                        fish_timer = pygame.time.get_ticks()
-                        fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
-                        points += 10
-                    else:
-                        no_fish_caught = True
-                        no_fish_timer = pygame.time.get_ticks()
-                click_to_fish = False
+                #HERW
+                if not win_message_shown:
+                    if not fish_caught and not no_fish_caught:
+                        # Check if the randomly generated number is a factor of 7
+                        if random.randint(0, 6) == 0:
+                            fish_caught = True
+                            fish_timer = pygame.time.get_ticks()
+                            fish_choice = evil_fish_frames  # Use the evil fish frames
+                            points -= 10  # Deduct 10 points for catching the evil fish
+                        else:
+                            if random.randint(0, 1) == 0:
+                                fish_caught = True
+                                fish_timer = pygame.time.get_ticks()
+                                fish_choice = random.choice([purple_fish_frames, rainbow_gold_fish_frames, clown_rainbow_fish_frames])
+                                if fish_choice == purple_fish_frames:
+                                    points += 10
+                                elif fish_choice == rainbow_gold_fish_frames:
+                                    points += 15
+                                elif fish_choice == clown_rainbow_fish_frames:
+                                    points += 20
+                            else:
+                                no_fish_caught = True
+                                no_fish_timer = pygame.time.get_ticks()
+                        click_to_fish = False
+
+
+    if points >= 500:
+        if not win_message_shown:
+            screen.fill((31, 81, 69))
+            win_message_shown = True
+            draw_messages(screen, "You Will Now Return To The Main Menu!", 60)
+            draw_messages(screen, "You Won!", 10)
+            draw_messages(screen, "Thank You For Playing My First Game!", 40)
+            pygame.display.flip()
+            pygame.time.wait(3000)  # Display the win message for 3 seconds
+            menu = True  # Return to the main menu
+            points = 0  # Reset points for the next game
+            click_to_fish = True
+            fish_caught = False
+            no_fish_caught = False
+            win_message_shown = False  # Reset the win message flag
 
     if menu:
         draw_start_menu(screen)
@@ -217,7 +270,7 @@ while True:
             else:
                 no_fish_caught = False
                 click_to_fish = True
-        else:
+        if not win_message_shown and not fish_caught and not no_fish_caught:
             draw_messages(screen, "Click to Fish!", 50)
 
         # Draw points
