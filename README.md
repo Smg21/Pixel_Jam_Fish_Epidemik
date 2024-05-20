@@ -1,4 +1,4 @@
-Game I made as an entry for the Pixel Game Jam 2024. This is the first game I have ever coded. I used Pygame and Aseprite. It is a fishing game, with a little fisherman and a few different animated fishes. 
+Game I made as an entry for the Pixel Game Jam 2024. This is the first game I have ever programmed. I used Pygame and Aseprite. It is a fishing game, with a little fisherman and a few different animated fishes. 
 You click to fish and for every fish caught you get a certain number of points. If you however catch the evil fish you lose 30 points. To win you need 500 points. 
 I wrote my own code and I drew the pixel art but I used the sources below for the sounds and the fonts. 
 #Sound Effect CONGRATULATIONS by <a href="https://pixabay.com/users/voicebosch-30143949/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=172193">Otto</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=172193">Pixabay</a>
